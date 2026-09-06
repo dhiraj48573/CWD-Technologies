@@ -64,7 +64,7 @@ export function Chatbot() {
         break;
 
       case 'company':
-        responseText = `${siteConfig.companyName} is located at ${siteConfig.contact.address}. You can reach us at ${siteConfig.contact.email} or call ${siteConfig.contact.phone}.`;
+        responseText = `${siteConfig.companyName} is located at ${siteConfig.contact.location}. You can reach us at ${siteConfig.contact.email} or call ${siteConfig.contact.phone}.`;
         break;
 
       case 'contact':
@@ -98,7 +98,7 @@ export function Chatbot() {
           const pName = action.replace('price_', '');
           const pData = Object.values(pricingConfig.services).find(s => s.name === pName);
           if (pData) {
-            responseText = `Pricing for ${pName}:\n` + pData.tiers.map(t => `- ${t.name}: ${t.isStartingPrice ? 'Starting at' : ''} ₹${t.price.toLocaleString()}`).join('\n');
+            responseText = `Pricing for ${pName}:\n` + pData.tiers.map(t => `- ${t.name}: ${'isStartingPrice' in t && t.isStartingPrice ? 'Starting at' : ''} ₹${t.price.toLocaleString()}`).join('\n');
           } else {
             responseText = 'Please contact us for custom pricing!';
           }
