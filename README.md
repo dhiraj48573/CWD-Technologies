@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CWD Technologies Platform
 
-## Getting Started
+Welcome to the official repository for **CWD Technologies** — a scalable, modern technology agency platform designed for high conversion, lead generation, and digital growth.
 
-First, run the development server:
+## 🏗 Architecture Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This repository is structured as a **Monorepo**, cleanly separating the frontend user interface from the backend API services to allow for flexible, independent deployments.
+
+```text
+CWD Technologies/
+├── frontend/                 # Next.js App (React, Tailwind, Shadcn UI)
+└── backend/                  # Node.js/Express API (Lead Management, Webhooks)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Frontend (`/frontend`)
+* **Interactive Quotation Generator:** A step-by-step tool allowing users to build a custom quote, view dynamic pricing, export as a clean PDF, and send directly via WhatsApp.
+* **Aggressive Startup Pricing Strategy:** Built-in tiered pricing structures specifically designed to attract both fresh startups and enterprise clients.
+* **Centralized Configuration:** Zero hardcoded data. All services, pricing, FAQs, legal terms, and payment details are centrally managed in `src/config/*.ts` files for instant updates.
+* **Dynamic Service Pages:** Auto-generated pages for every service offering (Website Dev, Custom Software, AI Integration, etc.) complete with localized "Discuss on WhatsApp" CTAs.
+* **Modern Aesthetic:** Dark mode, glassmorphism, smooth animations, and premium typography.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Backend (`/backend`)
+* **Lead Management API:** An Express server foundation ready to handle incoming leads from the frontend.
+* **Integration Ready:** Pre-architected with placeholders to connect to Hubspot/Salesforce CRMs, SendGrid emails, and Zapier Webhooks.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Getting Started Locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Running the Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the website.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Running the Backend
+```bash
+cd backend
+npm install
+npm start
+```
+The backend API will run on port 5000 by default.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🌍 Deployment Guide
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Deploying Frontend (Vercel)
+The frontend is optimized for **Vercel**.
+1. Import this GitHub repository into Vercel.
+2. In the project configuration, change the **Root Directory** to `frontend`.
+3. Deploy. Vercel will automatically detect Next.js and build it.
+
+### Deploying Backend (Render)
+The backend is optimized for services like **Render** or Heroku.
+1. Create a new Web Service on Render and connect this repository.
+2. Change the **Root Directory** to `backend`.
+3. Build Command: `npm install`
+4. Start Command: `npm start`
+
+---
+
+*Designed and Developed by Dhiraj Kumar Singh for CWD Technologies (2026).*
