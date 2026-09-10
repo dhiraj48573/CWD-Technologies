@@ -26,7 +26,7 @@ export const siteConfig = {
     upiId: "cwdtech@upi"
   },
   brand: {
-    logo: "/CWD LOGO.png",
+    logo: "/cwd-techno-logo.jpeg",
     tagline: "Technology. AI. Software. Digital Growth.",
     alternativeHeadline: "We Build Digital Products, Automate Businesses & Grow Brands.",
     description: "CWD Technologies is a full-service technology partner helping businesses transform their ideas into Websites, Web Applications, Mobile Applications, Business Software, SaaS Platforms, AI-Powered Solutions, Automation Systems, Digital Marketing Campaigns, and more."
