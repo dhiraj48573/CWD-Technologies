@@ -333,12 +333,12 @@ export function QuotationGenerator() {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start border-b border-border pb-8 mb-8">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight text-primary">CWD Technologies</h1>
-                <p className="text-sm text-foreground/70 mt-1">Innovative Digital Solutions</p>
-                <div className="mt-4 text-sm">
-                  <p>Mumbai, India</p>
-                  <p>hello@cwdtech.com</p>
-                  <p>+91 98765 43210</p>
+                <h1 className="text-3xl font-bold tracking-tight text-primary">{siteConfig.companyName}</h1>
+                <p className="text-sm text-foreground/70 mt-1">{siteConfig.primaryPositioning}</p>
+                <div className="mt-4 text-sm text-foreground/80 space-y-0.5">
+                  <p>{siteConfig.contact.location}</p>
+                  <p>{siteConfig.contact.email}</p>
+                  <p>{siteConfig.contact.phone}</p>
                 </div>
               </div>
               <div className="mt-6 md:mt-0 text-left md:text-right">

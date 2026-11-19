@@ -1,77 +1,95 @@
 import { NextResponse } from 'next/server';
 
+function sanitize(str: string): string {
+  if (!str || typeof str !== 'string') return '';
+  return str.replace(/[<>]/g, '').trim();
+}
+
+function isValidEmail(email: string): boolean {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
 export async function POST(request: Request) {
   try {
-    const data = await request.json();
-    
-    // 1. Validation (Placeholder)
-    if (!data.name || !data.email || !data.phone) {
+    const rawData = await request.json();
+
+    const name = sanitize(rawData.name);
+    const company = sanitize(rawData.company);
+    const email = sanitize(rawData.email);
+    const phone = sanitize(rawData.phone);
+    const service = sanitize(rawData.service);
+    const budget = sanitize(rawData.budget);
+    const timeline = sanitize(rawData.timeline);
+    const preferredContact = sanitize(rawData.preferredContact);
+    const message = sanitize(rawData.message);
+
+    // 1. Validation
+    if (!name || name.length < 2) {
       return NextResponse.json(
-        { error: 'Name, email, and phone are required fields.' },
+        { error: 'Please enter a valid full name (minimum 2 characters).' },
         { status: 400 }
       );
     }
 
-    /* =========================================================================
-     * ARCHITECTURE PLACEHOLDERS FOR FUTURE INTEGRATION
-     * Uncomment and implement the relevant blocks when backend is ready.
-     * ========================================================================= */
+    if (!email || !isValidEmail(email)) {
+      return NextResponse.json(
+        { error: 'Please enter a valid business or personal email address.' },
+        { status: 400 }
+      );
+    }
 
-    /* 
-    // 2. Email Notification (e.g., SendGrid, Resend, AWS SES)
-    await sendEmail({
-      to: 'hello@cwdtech.com',
-      subject: `New Lead: ${data.service}`,
-      body: `Name: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone}\nCompany: ${data.company}\nBudget: ${data.budget}\nMessage: ${data.message}`
-    });
-    */
+    if (!phone || phone.replace(/\D/g, '').length < 8) {
+      return NextResponse.json(
+        { error: 'Please enter a valid phone number (minimum 8 digits).' },
+        { status: 400 }
+      );
+    }
 
-    /*
-    // 3. Database Insertion (e.g., Prisma, Supabase, MongoDB)
-    await db.lead.create({
-      data: {
-        name: data.name,
-        company: data.company,
-        email: data.email,
-        phone: data.phone,
-        service: data.service,
-        budget: data.budget,
-        message: data.message,
-        source: 'Website Contact Form'
+    const leadPayload = {
+      name,
+      company: company || 'N/A',
+      email,
+      phone,
+      service: service || 'General Inquiry',
+      budget: budget || 'To be discussed',
+      timeline: timeline || 'Flexible',
+      preferredContact: preferredContact || 'WhatsApp',
+      message: message || 'N/A',
+      timestamp: new Date().toISOString(),
+      source: 'cwd-technologies.vercel.app',
+    };
+
+    // 2. Structured Lead Logging
+    console.log('[CWD TECHNOLOGIES NEW LEAD INQUIRY]', JSON.stringify(leadPayload, null, 2));
+
+    // 3. Optional Webhook / Express Backend Forwarding
+    const backendUrl = process.env.BACKEND_API_URL || process.env.LEAD_WEBHOOK_URL;
+    if (backendUrl) {
+      try {
+        await fetch(backendUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(leadPayload),
+          signal: AbortSignal.timeout(3000),
+        });
+      } catch (err) {
+        console.warn('[CWD Contact API] Webhook forward failed gracefully:', err);
       }
-    });
-    */
+    }
 
-    /*
-    // 4. CRM Integration (e.g., HubSpot, Salesforce)
-    await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${process.env.HUBSPOT_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ properties: { email: data.email, firstname: data.name, phone: data.phone } })
-    });
-    */
-
-    /*
-    // 5. Google Sheets / Webhook Sync (e.g., Zapier, Make.com)
-    await fetch('https://hooks.zapier.com/hooks/catch/12345/abcde/', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-    */
-
-    // Simulate network delay for UI testing
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Success Response
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Thank you! Your message has been received. Our team will contact you shortly.' 
-    }, { status: 200 });
-
-  } catch (error) {
-    console.error('Contact API Error:', error);
+    // Success response
     return NextResponse.json(
-      { error: 'An unexpected error occurred while processing your request.' },
+      {
+        success: true,
+        message: 'Thank you! Your requirement has been securely submitted to CWD Technologies. Our team will contact you shortly.',
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Contact API Internal Error:', error);
+    return NextResponse.json(
+      { error: 'An unexpected error occurred while processing your request. Please try again or reach out on WhatsApp.' },
       { status: 500 }
     );
   }

@@ -1,29 +1,55 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { ProjectIntakeForm } from '@/components/forms/ProjectIntakeForm';
+import { Sparkles, CheckCircle2 } from 'lucide-react';
 
 export const metadata = {
   title: 'Start Your Project | CWD Technologies',
-  description: 'Submit your project requirements and get a detailed consultation.',
+  description:
+    'Submit your project requirements and receive a comprehensive technical proposal and itemized quotation from CWD Technologies.',
 };
 
 export default function StartProjectPage() {
   return (
-    <div className="py-20 md:py-32 bg-background/50 relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-secondary/20 blur-[120px] rounded-full pointer-events-none" />
+    <div className="py-16 md:py-24 relative overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 blur-[140px] rounded-full pointer-events-none -z-10" />
 
-      <div className="container mx-auto max-w-4xl px-4 relative z-10">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-foreground">
-            Let's Build Something <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Amazing</span>
+      <div className="container max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+        
+        {/* Header */}
+        <div className="text-center mb-12 space-y-3">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Kickstart Your Project</span>
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-foreground">
+            Let's Build Something <span className="gradient-text">Exceptional</span>
           </h1>
-          <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-            Fill out the form below with your project details. The more information you provide, the better we can prepare for our initial consultation.
+          <p className="text-sm sm:text-base text-foreground/75 max-w-xl mx-auto leading-relaxed">
+            Fill out the form below with your project details. The more information you provide, the faster our engineering team can prepare an accurate architecture proposal and quote.
           </p>
+
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-foreground/70">
+            <span className="flex items-center">
+              <CheckCircle2 className="w-3.5 h-3.5 text-primary mr-1.5" />
+              Response within 24 hours
+            </span>
+            <span className="flex items-center">
+              <CheckCircle2 className="w-3.5 h-3.5 text-primary mr-1.5" />
+              Itemized milestone quotation
+            </span>
+            <span className="flex items-center">
+              <CheckCircle2 className="w-3.5 h-3.5 text-primary mr-1.5" />
+              Confidentiality guaranteed
+            </span>
+          </div>
         </div>
 
-        <ProjectIntakeForm />
+        {/* Multi-field Intake Form */}
+        <Suspense fallback={<div className="p-8 text-center text-foreground/50">Loading intake form...</div>}>
+          <ProjectIntakeForm />
+        </Suspense>
+
       </div>
     </div>
   );

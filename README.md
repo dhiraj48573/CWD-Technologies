@@ -1,33 +1,69 @@
 # CWD Technologies Platform
 
-Welcome to the official repository for **CWD Technologies** — a scalable, modern technology agency platform designed for high conversion, lead generation, and digital growth.
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.3.4-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19.2.8-blue?style=flat&logo=react)](https://react.dev/)
+[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
+[![TypeScript 5](https://img.shields.io/badge/TypeScript-5.0-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Vercel Deployed](https://img.shields.io/badge/Deployment-Vercel-black?style=flat&logo=vercel)](https://cwd-technologies.vercel.app/)
 
-## 🏗 Architecture Overview
+Welcome to the official repository for **CWD Technologies** — a scalable, modern technology agency platform engineered for high conversion, technical performance, and digital growth.
 
-This repository is structured as a **Monorepo**, cleanly separating the frontend user interface from the backend API services to allow for flexible, independent deployments.
-
-```text
-CWD Technologies/
-├── frontend/                 # Next.js App (React, Tailwind, Shadcn UI)
-└── backend/                  # Node.js/Express API (Lead Management, Webhooks)
-```
-
-## ✨ Key Features
-
-### Frontend (`/frontend`)
-* **Interactive Quotation Generator:** A step-by-step tool allowing users to build a custom quote, view dynamic pricing, export as a clean PDF, and send directly via WhatsApp.
-* **Aggressive Startup Pricing Strategy:** Built-in tiered pricing structures specifically designed to attract both fresh startups and enterprise clients.
-* **Centralized Configuration:** Zero hardcoded data. All services, pricing, FAQs, legal terms, and payment details are centrally managed in `src/config/*.ts` files for instant updates.
-* **Dynamic Service Pages:** Auto-generated pages for every service offering (Website Dev, Custom Software, AI Integration, etc.) complete with localized "Discuss on WhatsApp" CTAs.
-* **Modern Aesthetic:** Dark mode, glassmorphism, smooth animations, and premium typography.
-
-### Backend (`/backend`)
-* **Lead Management API:** An Express server foundation ready to handle incoming leads from the frontend.
-* **Integration Ready:** Pre-architected with placeholders to connect to Hubspot/Salesforce CRMs, SendGrid emails, and Zapier Webhooks.
+**Brand Positioning:** *"Your Technology & Digital Growth Partner"*  
+**Headquarters:** Haridwar, Uttarakhand, India  
+**Official Live Preview:** [https://cwd-technologies.vercel.app/](https://cwd-technologies.vercel.app/)
 
 ---
 
-## 🚀 Getting Started Locally
+## 🏗 Architecture Overview
+
+The repository is structured as a clean **Monorepo**:
+
+```text
+CWD Technologies/
+├── frontend/                 # Next.js 16 App Router (React 19, Turbopack, Tailwind CSS v4)
+│   ├── public/               # Public assets (Brand Logo: cwd-techno-logo.jpeg)
+│   └── src/
+│       ├── app/              # App Router Pages, Dynamic Routes, APIs, Sitemap, Robots
+│       │   ├── about/        # About Us & Engineering Philosophy
+│       │   ├── api/contact/  # Sanitized, Validated Lead API Route
+│       │   ├── contact/      # Contact Desk, Location & Direct Inquiry
+│       │   ├── portfolio/    # Case Studies & Work Showcase ([id] dynamic routing)
+│       │   ├── pricing/      # Transparent Pricing, Launch Packages, Milestone Disclaimers
+│       │   ├── quote/        # Step-by-Step Interactive Quotation Generator
+│       │   ├── services/     # 9 Dedicated Service Landing Pages ([id] dynamic routing)
+│       │   ├── start/        # Multi-Field Project Intake System
+│       │   ├── not-found.tsx # Custom 404 Error Page
+│       │   ├── sitemap.ts    # Dynamic XML Sitemap Generator
+│       │   └── robots.ts     # SEO Robots Protocol
+│       ├── components/       # UI Components, Sections, Forms, Layout, Dual-Theme System
+│       ├── config/           # Centralized Configuration (Services, Industries, Pricing, Site)
+│       └── lib/              # Type-Safe Utilities
+├── backend/                  # Node.js/Express API foundation
+├── DEPLOYMENT.md             # Production Vercel & Hostinger DNS Setup Guide
+└── README.md                 # Project Documentation
+```
+
+---
+
+## ✨ Upgraded Features & Capabilities
+
+### 1. High-Performance Frontend (`/frontend`)
+* **Next.js 16 & React 19:** Powered by Turbopack for instant development cycles and optimized server-side builds.
+* **Dual-Theme System:** Sleek obsidian/navy dark theme and clean slate light theme with zero layout shift.
+* **9 Dedicated Service Pages:** Individual SEO-optimized landing pages with problem breakdowns, custom solutions, technical features, benefits, and workflows.
+* **10 Industry Verticals:** Custom cards tailored for Healthcare, Education, Salons, Gyms, Hospitality, Retail, Real Estate, Startups, Professional Services, and Local SMBs.
+* **Interactive Quotation Generator:** Step-by-step price calculation with add-ons, printable PDF layout, and instant WhatsApp export.
+* **Authentic Case Studies:** Real technical challenges, architecture solutions, and verified outcomes across Web, Software, AI, and E-Commerce.
+* **Lead Generation & Client Experience:** Multi-field project intake with server-side validation and a floating WhatsApp button pre-configured with verified business messaging.
+
+### 2. Comprehensive Technical SEO
+* **Schema.org Structured Data:** Injected Organization, LocalBusiness, ProfessionalService, Service, and Article JSON-LD markup.
+* **Local SEO Optimization:** Targeted for Haridwar, Dehradun, Rishikesh, Uttarakhand, and nationwide.
+* **Automated XML Sitemap & Robots Protocol:** Dynamic sitemap generation covering all pages and dynamic parameters.
+
+---
+
+## 🚀 Local Development
 
 ### Running the Frontend
 ```bash
@@ -37,31 +73,29 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) to view the website.
 
-### Running the Backend
+### Building for Production
 ```bash
-cd backend
-npm install
-npm start
+cd frontend
+npm run build
 ```
-The backend API will run on port 5000 by default.
 
 ---
 
-## 🌍 Deployment Guide
+## 🌐 Production Deployment & Hostinger DNS
 
-### Deploying Frontend (Vercel)
-The frontend is optimized for **Vercel**.
-1. Import this GitHub repository into Vercel.
-2. In the project configuration, change the **Root Directory** to `frontend`.
-3. Deploy. Vercel will automatically detect Next.js and build it.
+For complete step-by-step instructions on connecting your Hostinger-registered domain to Vercel without disrupting corporate email, please refer to:
 
-### Deploying Backend (Render)
-The backend is optimized for services like **Render** or Heroku.
-1. Create a new Web Service on Render and connect this repository.
-2. Change the **Root Directory** to `backend`.
-3. Build Command: `npm install`
-4. Start Command: `npm start`
+👉 **[DEPLOYMENT.md](DEPLOYMENT.md)**
 
 ---
 
-*Designed and Developed by Dhiraj Kumar Singh for CWD Technologies (2026).*
+## 📞 Company Contact & Verification
+
+- **Company Name:** CWD Technologies
+- **Founder & Lead Architect:** Dhiraj Kumar Singh
+- **Location:** Haridwar, Uttarakhand, India
+- **Phone / WhatsApp:** +91 9259534648
+- **Email:** codewithdhiru07@gmail.com
+- **Website:** [https://cwd-technologies.vercel.app/](https://cwd-technologies.vercel.app/)
+
+*Designed and Developed for CWD Technologies (2026).*

@@ -2,13 +2,23 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import {
+  ArrowRight,
+  CheckCircle2,
+  AlertCircle,
+  HelpCircle,
+  ArrowLeft,
+  Sparkles,
+  Layers,
+  MessageCircle,
+} from 'lucide-react';
 
 import { servicesConfig } from '@/config/services.config';
 import { pricingConfig } from '@/config/pricing.config';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { portfolioConfig } from '@/config/portfolio.config';
 import { siteConfig } from '@/config/site.config';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
 // Pre-render all dynamic service pages at build time
 export function generateStaticParams() {
@@ -20,177 +30,486 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const service = servicesConfig.find((s) => s.id === id);
-  if (!service) return { title: 'Service Not Found' };
+  if (!service) return { title: 'Service Not Found | CWD Technologies' };
+
+  const canonicalUrl = `${siteConfig.url}/services/${service.id}`;
 
   return {
-    title: `${service.title} | CWD Technologies`,
-    description: service.description,
+    title: service.seoTitle || `${service.title} | CWD Technologies`,
+    description: service.metaDescription || service.description,
+    keywords: [
+      ...(service.targetKeywords || []),
+      service.title,
+      `${service.title} in Haridwar`,
+      `${service.title} Uttarakhand`,
+      ...service.subServices,
+    ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: service.seoTitle || `${service.title} | CWD Technologies`,
+      description: service.metaDescription || service.description,
+      url: canonicalUrl,
+      siteName: siteConfig.companyName,
+      type: 'website',
+      images: [
+        {
+          url: service.image || siteConfig.ogImage,
+          width: 1200,
+          height: 630,
+          alt: service.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: service.seoTitle || `${service.title} | CWD Technologies`,
+      description: service.metaDescription || service.description,
+      images: [service.image || siteConfig.ogImage],
+    },
   };
 }
 
-export default async function ServiceDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ServiceDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const service = servicesConfig.find((s) => s.id === id);
-  
+
   if (!service) {
     notFound();
   }
 
-  // Type assertion to ensure we can index into pricingConfig.services safely
   type PricingCategory = keyof typeof pricingConfig.services;
   const pricingData = pricingConfig.services[service.pricingKey as PricingCategory];
   const Icon = service.icon;
 
+  // Filter relevant portfolio projects
+  const relatedProjects = portfolioConfig.filter((p) => {
+    if (service.id === 'website-development') return p.category === 'Business Websites';
+    if (service.id === 'software-development') return p.category === 'Custom Software';
+    if (service.id === 'mobile-app-development') return p.category === 'Healthcare' || p.category === 'Business Websites';
+    if (service.id === 'ai-solutions') return p.category === 'AI & Automation';
+    if (service.id === 'e-commerce') return p.category === 'E-Commerce';
+    return true;
+  }).slice(0, 2);
+
+  const whatsappUrl = `https://wa.me/${siteConfig.contact.whatsapp}?text=${encodeURIComponent(
+    `Hello CWD Technologies, I am interested in your ${service.title} service. I would like to discuss my project requirements.`
+  )}`;
+
+  // Schema.org Structured Data
+  const serviceJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.title,
+    description: service.description,
+    provider: {
+      '@type': 'LocalBusiness',
+      name: siteConfig.companyName,
+      telephone: siteConfig.contact.phone,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Haridwar',
+        addressRegion: 'Uttarakhand',
+        addressCountry: 'IN',
+      },
+    },
+    areaServed: 'Worldwide',
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: `${service.title} Offerings`,
+      itemListElement: service.subServices.map((sub, i) => ({
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: sub,
+        },
+      })),
+    },
+  };
+
+  // Schema.org FAQ Schema
+  const faqJsonLd = service.faqs?.length
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: service.faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
+
+  // Schema.org Breadcrumb
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteConfig.url,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Services',
+        item: `${siteConfig.url}/services`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: service.title,
+        item: `${siteConfig.url}/services/${service.id}`,
+      },
+    ],
+  };
+
   return (
-    <div className="pt-20">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-32">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-background/90 z-10" />
-          <Image 
-            src={service.image}
-            alt={service.title}
-            fill
-            className="object-cover object-center opacity-30"
-            priority
-          />
-        </div>
-        
-        <div className="container mx-auto px-4 relative z-20">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center space-x-2 bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-medium mb-6">
-              <Icon size={16} />
-              <span>Core Service</span>
+    <div className="pt-8 pb-20 md:pb-32">
+      {/* Schema.org Service & Rich Snippet Injections */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
+      {/* Top Back Nav */}
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 mb-6">
+        <Link
+          href="/services"
+          className="inline-flex items-center text-xs sm:text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5" />
+          Back to All Services
+        </Link>
+      </div>
+
+      {/* 1. Hero Section (Headline & Solution) */}
+      <section className="relative overflow-hidden py-12 md:py-20 bg-secondary/20 border-y border-border/50">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="max-w-4xl space-y-6">
+            
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider">
+              <Icon className="w-3.5 h-3.5" />
+              <span>{service.badge}</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">{service.title}</h1>
-            <p className="text-lg md:text-xl text-foreground/80 mb-8 leading-relaxed">
-              {service.longDescription || service.description}
+
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-foreground leading-[1.12]">
+              {service.headline}
+            </h1>
+
+            <p className="text-base sm:text-lg md:text-xl text-foreground/75 leading-relaxed">
+              {service.description}
             </p>
-            <div className="flex flex-wrap gap-4 mt-8">
-              <Link href="/quote">
-                <Button size="lg" className="h-12 px-8">Get a Quote</Button>
+
+            <div className="flex flex-wrap gap-3 pt-4">
+              <Link href={`/start?service=${service.id}`}>
+                <Button size="lg" className="font-semibold shadow-md">
+                  Start Your {service.title}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
               </Link>
-              <Link 
-                href={`https://wa.me/${siteConfig.contact.whatsapp.replace(/\D/g, '').length === 10 ? '91' + siteConfig.contact.whatsapp.replace(/\D/g, '') : siteConfig.contact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`Hello, I am interested in your ${service.title} service. I would like to discuss my project requirements.`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button variant="outline" size="lg" className="h-12 px-8 border-green-500/50 text-green-600 hover:bg-green-500/10 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300">
-                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="lg" className="border-emerald-500/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10">
+                  <MessageCircle className="w-4 h-4 mr-2" />
                   Discuss on WhatsApp
+                </Button>
+              </a>
+              <Link href="/quote">
+                <Button variant="outline" size="lg">
+                  Instant Quotation
                 </Button>
               </Link>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* Workflow Section */}
-      {service.workflow && (
-        <section className="py-20 bg-background/50">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">Our Process</h2>
-              <p className="text-foreground/70 max-w-2xl mx-auto">How we deliver exceptional results for your business, step by step.</p>
-            </div>
+      {/* 2 & 3. Problem vs Solution Comparison */}
+      <section className="py-16 md:py-24">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {service.workflow.map((step, index) => (
-                <div key={index} className="relative group">
-                  <div className="hidden lg:block absolute top-8 left-[60%] w-full h-[2px] bg-border z-0">
-                    <div className="h-full bg-primary w-0 group-hover:w-full transition-all duration-700" />
-                  </div>
-                  <div className="relative z-10 flex flex-col items-center text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-background border-2 border-primary/30 flex items-center justify-center text-2xl font-bold text-primary mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-lg">
-                      {index + 1}
-                    </div>
-                    <h3 className="text-xl font-semibold mb-3">{step.step}</h3>
-                    <p className="text-sm text-foreground/70">{step.desc}</p>
-                  </div>
-                </div>
-              ))}
+            {/* The Problem */}
+            <div className="rounded-2xl border border-rose-500/30 bg-rose-500/5 p-6 sm:p-8 space-y-4">
+              <div className="inline-flex items-center space-x-2 text-rose-500 font-bold text-xs uppercase tracking-wider">
+                <AlertCircle className="w-4 h-4" />
+                <span>The Core Business Problem</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+                Why Standard Approaches Fail
+              </h3>
+              <p className="text-sm sm:text-base text-foreground/80 leading-relaxed">
+                {service.businessProblem}
+              </p>
             </div>
-          </div>
-        </section>
-      )}
 
-      {/* Features Detail */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-12">Key Features Included</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 text-left">
-            {service.features.map((feature, idx) => (
-              <div key={idx} className="flex items-center p-4 glass rounded-xl border border-border/50">
-                <CheckCircle2 className="w-6 h-6 text-green-500 mr-4 shrink-0" />
-                <span className="font-medium text-lg">{feature}</span>
+            {/* Our Solution */}
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6 sm:p-8 space-y-4">
+              <div className="inline-flex items-center space-x-2 text-emerald-500 font-bold text-xs uppercase tracking-wider">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>The CWD Technologies Solution</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground">
+                How We Engineer Results
+              </h3>
+              <p className="text-sm sm:text-base text-foreground/80 leading-relaxed">
+                {service.ourSolution}
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 4 & 5. Key Features & Sub-Services */}
+      <section className="py-16 bg-secondary/30 border-y border-border/50">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            {/* Features (7 cols) */}
+            <div className="lg:col-span-7 space-y-6">
+              <span className="text-xs font-bold tracking-widest text-primary uppercase block">
+                Technical Architecture
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">
+                Key Features Engineered Into Every Build
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                {service.features.map((feature, i) => (
+                  <div key={i} className="p-4 rounded-xl glass border border-border/70 flex items-start">
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mr-2.5 mt-0.5" />
+                    <span className="text-xs sm:text-sm font-medium text-foreground/90">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sub-Services Scope (5 cols) */}
+            <div className="lg:col-span-5 rounded-2xl glass border border-border/80 p-6 sm:p-8 space-y-4">
+              <div className="inline-flex items-center space-x-2 text-primary font-bold text-xs uppercase tracking-wider">
+                <Layers className="w-4 h-4" />
+                <span>Specialized Offerings</span>
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Deliverables in This Category</h3>
+              <ul className="space-y-2.5 text-xs sm:text-sm text-foreground/75 divide-y divide-border/40">
+                {service.subServices.map((sub, i) => (
+                  <li key={i} className="pt-2 flex items-center justify-between">
+                    <span>{sub}</span>
+                    <span className="text-primary font-mono text-[10px]">Ready</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Benefits (Strategic Value) */}
+      <section className="py-16 md:py-24">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold tracking-widest text-primary uppercase block mb-2">
+              Commercial Impact
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">
+              Direct Benefits for Your Enterprise
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {service.benefits.map((benefit, idx) => (
+              <div key={idx} className="p-6 rounded-2xl glass border border-border/70 hover:border-primary/50 transition-all">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold mb-4">
+                  0{idx + 1}
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-2">{benefit.title}</h3>
+                <p className="text-sm text-foreground/75 leading-relaxed">{benefit.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* 7. Development Process */}
+      <section className="py-16 bg-secondary/20 border-y border-border/50">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold tracking-widest text-primary uppercase block mb-2">
+              Execution Roadmap
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">
+              How We Deliver {service.title}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {service.workflow.map((step, idx) => (
+              <div key={idx} className="p-6 rounded-2xl glass border border-border/70 flex flex-col justify-between">
+                <div>
+                  <span className="font-mono text-2xl font-black text-primary/40 block mb-3">
+                    0{idx + 1}
+                  </span>
+                  <h3 className="font-bold text-base text-foreground mb-2">{step.step}</h3>
+                  <p className="text-xs sm:text-sm text-foreground/70 leading-relaxed">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8. Pricing Tiers */}
       {pricingData && (
-        <section className="py-24 bg-primary/5">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-4">Transparent Pricing</h2>
-              <p className="text-foreground/70 max-w-2xl mx-auto">Select a package that fits your goals, or build a custom quote.</p>
+        <section className="py-16 md:py-24">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="text-xs font-bold tracking-widest text-primary uppercase block mb-2">
+                Clear Packages
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">
+                Transparent {pricingData.name} Pricing
+              </h2>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {pricingData.tiers.slice(0, 3).map((pkg: any, i: number) => {
-                const isPopular = pkg.isPopular || i === 1; // Default to middle card if none specified
-                return (
-                <Card key={i} className={`relative overflow-hidden flex flex-col transition-all duration-500 ${isPopular ? 'border-primary shadow-xl shadow-primary/10' : 'hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10'}`}>
-                  {isPopular && (
-                    <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
-                  )}
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-2xl">{pkg.name}</CardTitle>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {pricingData.tiers.slice(0, 3).map((tier: any, i: number) => (
+                <Card key={i} className="glass flex flex-col justify-between border-border/70 hover:border-primary/50 transition-all">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-bold">{tier.name}</CardTitle>
+                    <p className="text-xs text-foreground/60">{tier.description}</p>
                   </CardHeader>
-                  <CardContent className="flex-1 pb-8">
-                    <div className="mb-6">
-                      <span className="text-xs font-bold text-foreground/50 uppercase tracking-wider">
-                        {pkg.isStartingPrice ? 'Starting From' : pkg.isMonthly ? 'Management Fee' : 'Fixed Price'}
-                      </span>
-                      <div className="flex items-baseline gap-2 mt-2">
-                        {pkg.originalPrice && (
-                          <span className="text-foreground/40 line-through text-lg font-medium">
-                            ₹{pkg.originalPrice.toLocaleString()}
-                          </span>
-                        )}
-                        <div className={`text-4xl font-bold ${isPopular ? 'text-primary' : 'text-foreground'}`}>
-                          ₹{pkg.price.toLocaleString()}
-                          {pkg.isMonthly && <span className="text-lg font-normal text-foreground/50">/mo</span>}
-                        </div>
-                      </div>
+                  <CardContent>
+                    <div className="text-3xl font-black text-primary mb-1">
+                      ₹{tier.price.toLocaleString()}
+                      {tier.isMonthly && <span className="text-sm font-normal text-foreground/60">/mo</span>}
                     </div>
-                    <p className="text-foreground/80 font-medium mb-6">
-                      {pkg.description}
-                    </p>
+                    <span className="text-[10px] uppercase font-bold text-foreground/50 tracking-wider">
+                      {tier.isStartingPrice ? 'Starting Base Cost' : 'Fixed Scope'}
+                    </span>
                   </CardContent>
-                  <CardFooter className="pt-0">
-                    <Link href="/quote" className="w-full">
-                      <Button className="w-full" variant={isPopular ? 'default' : 'outline'}>Select Package</Button>
+                  <CardFooter className="pt-2">
+                    <Link href={`/start?service=${service.id}&package=${encodeURIComponent(tier.name)}`} className="w-full">
+                      <Button className="w-full font-semibold" variant={i === 1 ? 'default' : 'outline'}>
+                        Select Package
+                      </Button>
                     </Link>
                   </CardFooter>
                 </Card>
-                );
-              })}
+              ))}
             </div>
-            
-            {pricingData.tiers.length > 3 && (
-              <div className="mt-12 text-center">
-                <p className="text-foreground/70 mb-4">Looking for Enterprise or Custom scale?</p>
-                <Link href="/pricing">
-                  <Button variant="outline">View All {pricingData.name} Packages</Button>
-                </Link>
-              </div>
-            )}
           </div>
         </section>
       )}
+
+      {/* 9. Relevant Portfolio Projects */}
+      {relatedProjects.length > 0 && (
+        <section className="py-16 bg-secondary/20 border-y border-border/50">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="text-xs font-bold tracking-widest text-primary uppercase block mb-2">
+                Demonstrated Capability
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">
+                Related Case Studies
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {relatedProjects.map((p) => (
+                <Link key={p.id} href={`/portfolio/${p.id}`} className="group block">
+                  <div className="rounded-2xl glass border border-border/70 overflow-hidden hover:border-primary/50 transition-all">
+                    <div className="relative h-48 w-full overflow-hidden">
+                      <Image src={p.image} alt={p.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                    <div className="p-6">
+                      <span className="text-xs font-mono font-bold text-primary block mb-1">{p.category}</span>
+                      <h3 className="font-bold text-lg text-foreground mb-2 group-hover:text-primary transition-colors">{p.title}</h3>
+                      <p className="text-xs sm:text-sm text-foreground/70 line-clamp-2">{p.description}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 10. Service Specific FAQs */}
+      <section className="py-16 md:py-24">
+        <div className="container max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <span className="text-xs font-bold tracking-widest text-primary uppercase block mb-2">
+              Common Inquiries
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-foreground">
+              Frequently Asked Questions About {service.title}
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {service.faqs.map((faq, fIdx) => (
+              <div key={fIdx} className="p-6 rounded-2xl glass border border-border/70 space-y-2">
+                <h3 className="font-bold text-base sm:text-lg text-foreground flex items-center">
+                  <HelpCircle className="w-5 h-5 text-primary shrink-0 mr-2.5" />
+                  <span>{faq.question}</span>
+                </h3>
+                <p className="text-sm text-foreground/75 leading-relaxed pl-7.5">
+                  {faq.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom Final CTA */}
+      <section className="container max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="rounded-3xl glass border border-primary/40 p-8 sm:p-12 text-center shadow-xl space-y-6">
+          <h2 className="text-3xl sm:text-4xl font-black text-foreground">
+            Ready to Engineer Your {service.title}?
+          </h2>
+          <p className="text-base text-foreground/75 max-w-xl mx-auto">
+            Book a free consultation with our engineering team to review your requirements, architecture, and timeline.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <Link href={`/start?service=${service.id}`}>
+              <Button size="lg" className="font-semibold">
+                Start Your Project
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" size="lg" className="border-emerald-500/50 text-emerald-600 dark:text-emerald-400">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Chat on WhatsApp
+              </Button>
+            </a>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }

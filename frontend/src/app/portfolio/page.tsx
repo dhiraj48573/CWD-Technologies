@@ -1,165 +1,181 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { portfolioConfig } from '@/config/portfolio.config';
-import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowUpRight } from 'lucide-react';
+import { portfolioConfig } from '@/config/portfolio.config';
+import { Button } from '@/components/ui/Button';
+import { ArrowRight, ExternalLink, CheckCircle2, Sparkles } from 'lucide-react';
+import { GithubIcon } from '@/components/ui/BrandIcons';
 
-const categories = ['All', 'Web', 'Software', 'Mobile', 'AI', 'Marketing'];
+const categories = [
+  'All',
+  'Business Websites',
+  'E-Commerce',
+  'Healthcare',
+  'Education',
+  'AI & Automation',
+  'Custom Software',
+];
 
-export default function PortfolioPage() {
-  const [activeCategory, setActiveCategory] = useState('All');
+export default function PortfolioListingPage() {
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  const filteredProjects = portfolioConfig.filter(
-    project => activeCategory === 'All' || project.category === activeCategory
-  );
+  const filteredProjects = portfolioConfig.filter((p) => {
+    if (selectedCategory === 'All') return true;
+    return p.category === selectedCategory;
+  });
 
   return (
-    <div className="py-20 md:py-32 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-40 left-0 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-40 right-0 w-[500px] h-[500px] bg-secondary/10 blur-[120px] rounded-full pointer-events-none" />
-
-      <div className="container mx-auto max-w-7xl px-4 relative z-10">
+    <div className="py-16 md:py-24">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6">
         
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-6">Our Work</h1>
-            <p className="text-lg text-foreground/70 mb-8 leading-relaxed">
-              We partner with ambitious brands to create digital products that solve complex problems and drive measurable growth.
-            </p>
-          </motion.div>
+        {/* Page Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Proven Engineering Case Studies</span>
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-foreground">
+            Our Work & Real-World Projects
+          </h1>
+          <p className="text-base sm:text-lg text-foreground/75 leading-relaxed">
+            Real software, scalable architectures, and verified technical outcomes. We engineer solutions that eliminate operational friction and accelerate growth.
+          </p>
 
-          {/* Filter System */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="flex flex-wrap justify-center gap-3"
-          >
-            {categories.map((category) => (
+          {/* Filter Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-6">
+            {categories.map((cat) => (
               <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeCategory === category
-                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
-                    : 'bg-secondary/50 text-foreground/70 hover:bg-secondary hover:text-foreground'
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  selectedCategory === cat
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'glass text-foreground/70 hover:text-foreground border border-border/70 hover:bg-secondary/70'
                 }`}
               >
-                {category}
+                {cat}
               </button>
             ))}
-          </motion.div>
+          </div>
         </div>
 
-        {/* Portfolio Grid */}
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mt-16">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, index) => {
-              // Create an alternating featured layout effect
-              const isFeatured = index === 0 && activeCategory === 'All';
-              
-              return (
-                <motion.div
-                  layout
-                  key={project.id}
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                  className={`group cursor-pointer ${isFeatured ? 'md:col-span-2' : ''}`}
-                >
-                  <Link href={`/portfolio/${project.id}`} className="block h-full">
-                    <div className="relative overflow-hidden rounded-2xl glass border border-border/50 hover:border-primary/50 transition-all duration-500 h-full flex flex-col">
-                      
-                      {/* Image Wrapper */}
-                      <div className={`relative w-full overflow-hidden ${isFeatured ? 'h-80 md:h-[500px]' : 'h-64'}`}>
-                        <Image 
-                          src={project.image} 
-                          alt={project.title} 
-                          fill 
-                          className="object-cover transition-transform duration-700 group-hover:scale-110" 
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-80" />
-                        
-                        {/* Hover Overlay */}
-                        <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                          <div className="bg-background text-foreground px-6 py-3 rounded-full font-semibold flex items-center transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 shadow-xl">
-                            Read Case Study <ArrowUpRight className="ml-2 w-4 h-4" />
-                          </div>
-                        </div>
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProjects.map((project) => (
+            <div
+              key={project.id}
+              className="rounded-3xl glass border border-border/80 overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all hover:shadow-xl group"
+            >
+              <div>
+                {/* Project Image */}
+                <div className="relative h-56 w-full overflow-hidden bg-card">
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 flex gap-1.5">
+                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-background/90 backdrop-blur-md text-primary border border-border">
+                      {project.category}
+                    </span>
+                  </div>
+                </div>
 
-                        {/* Top Tags */}
-                        <div className="absolute top-6 left-6 flex gap-2">
-                          <span className="text-xs font-semibold px-3 py-1 bg-background/80 backdrop-blur-md rounded-full text-primary shadow-sm border border-border/50">
-                            {project.category}
-                          </span>
-                          <span className="text-xs font-medium px-3 py-1 bg-background/80 backdrop-blur-md rounded-full text-foreground/80 shadow-sm border border-border/50">
-                            {project.industry}
-                          </span>
-                        </div>
-                      </div>
+                {/* Content */}
+                <div className="p-6 space-y-3">
+                  <span className="text-xs font-mono text-primary font-bold uppercase block">
+                    {project.clientType}
+                  </span>
+                  <h2 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                    <Link href={`/portfolio/${project.id}`}>
+                      {project.title}
+                    </Link>
+                  </h2>
+                  <p className="text-xs sm:text-sm text-foreground/70 line-clamp-3 leading-relaxed">
+                    {project.description}
+                  </p>
 
-                      {/* Content */}
-                      <div className={`p-8 flex flex-col flex-1 ${isFeatured ? 'md:w-3/4' : ''}`}>
-                        <div className="text-sm font-medium text-primary mb-2">{project.clientName}</div>
-                        <h3 className={`${isFeatured ? 'text-3xl' : 'text-2xl'} font-bold mb-4 tracking-tight group-hover:text-primary transition-colors duration-300`}>
-                          {project.title}
-                        </h3>
-                        <p className="text-foreground/70 mb-8 line-clamp-3 leading-relaxed flex-1">
-                          {project.description}
-                        </p>
-                        
-                        <div className="flex flex-wrap gap-2 mt-auto">
-                          {project.technology.map(tech => (
-                            <span key={tech} className="text-xs bg-secondary/80 text-foreground/80 px-2.5 py-1 rounded-md border border-border/50">
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
+                  {/* Outcome Highlight */}
+                  <div className="pt-2 text-xs text-foreground/80 flex items-start">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mr-1.5 mt-0.5" />
+                    <span className="font-medium line-clamp-1">{project.verifiedOutcomes[0]}</span>
+                  </div>
+                </div>
+              </div>
 
-                    </div>
+              {/* Technologies & CTA */}
+              <div className="p-6 pt-0 space-y-4">
+                <div className="flex flex-wrap gap-1.5">
+                  {project.technologies.slice(0, 4).map((tech) => (
+                    <span
+                      key={tech}
+                      className="text-[10px] font-mono px-2 py-0.5 rounded bg-secondary text-foreground/80 border border-border/60"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="pt-4 border-t border-border/50 flex items-center justify-between">
+                  <Link
+                    href={`/portfolio/${project.id}`}
+                    className="text-xs font-bold text-primary inline-flex items-center hover:underline"
+                  >
+                    <span>Read Case Study</span>
+                    <ArrowRight className="w-3.5 h-3.5 ml-1 transition-transform group-hover:translate-x-1" />
                   </Link>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </motion.div>
 
-        {filteredProjects.length === 0 && (
-          <div className="text-center py-20 text-foreground/50">
-            No projects found in this category.
-          </div>
-        )}
+                  <div className="flex items-center space-x-2">
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground/60 hover:text-primary transition-colors"
+                        aria-label="Live Demo"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    )}
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-foreground/60 hover:text-primary transition-colors"
+                        aria-label="GitHub Code"
+                      >
+                        <GithubIcon className="w-4 h-4" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-        {/* CTA */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-32 text-center glass p-12 md:p-16 rounded-3xl max-w-4xl mx-auto border border-border/50 relative overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 opacity-50" />
-          <div className="relative z-10">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Have a project in mind?</h2>
-            <p className="text-lg text-foreground/70 mb-10 max-w-2xl mx-auto">
-              We take pride in building scalable, secure, and modern solutions that drive real business results. Let's discuss how we can help you achieve your goals.
-            </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom Conversion Section */}
+        <div className="mt-20 p-8 sm:p-12 rounded-3xl glass border border-primary/30 text-center max-w-4xl mx-auto space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-black text-foreground">
+            Have a Specific Project You Want Engineered?
+          </h2>
+          <p className="text-sm sm:text-base text-foreground/75 max-w-xl mx-auto">
+            Our team will review your business requirements, define the optimal technical stack, and provide an itemized quote.
+          </p>
+          <div className="pt-2">
             <Link href="/start">
-              <Button size="lg" className="h-14 px-8 text-lg rounded-full">Start Your Project</Button>
+              <Button size="lg" className="font-semibold">
+                Start Your Project
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
             </Link>
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </div>

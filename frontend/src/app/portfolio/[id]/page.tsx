@@ -2,8 +2,17 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, TrendingUp } from 'lucide-react';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  ExternalLink,
+  Layers,
+  ShieldCheck,
+  Zap,
+} from 'lucide-react';
+import { GithubIcon } from '@/components/ui/BrandIcons';
 import { portfolioConfig } from '@/config/portfolio.config';
+import { siteConfig } from '@/config/site.config';
 import { Button } from '@/components/ui/Button';
 
 // Pre-render all dynamic portfolio pages at build time
@@ -16,174 +25,316 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const project = portfolioConfig.find((p) => p.id === id);
-  if (!project) return { title: 'Case Study Not Found' };
+  if (!project) return { title: 'Case Study Not Found | CWD Technologies' };
+
+  const canonicalUrl = `${siteConfig.url}/portfolio/${project.id}`;
 
   return {
-    title: `${project.title} Case Study | CWD Technologies`,
+    title: `${project.title} — Case Study | CWD Technologies`,
     description: project.description,
+    keywords: [
+      project.title,
+      project.category,
+      project.industry,
+      ...project.technologies,
+      'CWD Technologies case study',
+    ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${project.title} — Case Study | CWD Technologies`,
+      description: project.description,
+      url: canonicalUrl,
+      siteName: siteConfig.companyName,
+      images: [
+        {
+          url: project.image || siteConfig.ogImage,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+    },
   };
 }
 
-export default async function PortfolioDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PortfolioDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const project = portfolioConfig.find((p) => p.id === id);
-  
+
   if (!project) {
     notFound();
   }
 
+  // Schema.org CreativeWork
+  const workJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: project.title,
+    headline: project.headline,
+    description: project.description,
+    creator: {
+      '@type': 'Organization',
+      name: siteConfig.companyName,
+    },
+    genre: project.category,
+    keywords: project.technologies.join(', '),
+  };
+
+  // Schema.org Breadcrumb
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteConfig.url,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Portfolio',
+        item: `${siteConfig.url}/portfolio`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: project.title,
+        item: `${siteConfig.url}/portfolio/${project.id}`,
+      },
+    ],
+  };
+
   return (
-    <div className="pt-20">
-      
-      {/* Navigation Bar */}
-      <div className="border-b border-border bg-background/50 backdrop-blur-md sticky top-16 z-40">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/portfolio" className="inline-flex items-center text-sm font-medium text-foreground/70 hover:text-primary transition-colors">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Portfolio
-          </Link>
-          <div className="flex gap-2">
-            <span className="text-xs font-semibold px-2 py-1 bg-primary/10 text-primary rounded">{project.category}</span>
-            <span className="text-xs text-foreground/50 px-2 py-1">{project.industry}</span>
-          </div>
-        </div>
+    <div className="pt-8 pb-24 md:pb-32">
+      {/* Schema.org Injections */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(workJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
+      {/* Top Breadcrumb Navigation */}
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 mb-6">
+        <Link
+          href="/portfolio"
+          className="inline-flex items-center text-xs sm:text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1.5" />
+          Back to All Case Studies
+        </Link>
       </div>
 
-      {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src={project.image}
-            alt={project.title}
-            fill
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-        </div>
-        
-        <div className="container mx-auto px-4 relative z-20 text-center max-w-4xl">
-          <div className="text-sm font-bold text-primary tracking-widest uppercase mb-4">{project.clientName}</div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">{project.title}</h1>
-          <p className="text-xl text-foreground/80 leading-relaxed max-w-3xl mx-auto">
-            {project.description}
-          </p>
-        </div>
-      </section>
-
-      {/* Story Section */}
-      <section className="py-24">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
+      {/* Hero Header */}
+      <section className="py-10 md:py-16 bg-secondary/20 border-y border-border/50">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="max-w-4xl space-y-4">
             
-            {/* Left Column: Tech Stack & Overview */}
-            <div className="lg:col-span-4 space-y-10">
-              <div className="glass p-8 rounded-2xl border border-border/50">
-                <h3 className="text-lg font-bold mb-6 border-b border-border pb-4">Technology Stack</h3>
-                <div className="flex flex-wrap gap-2">
-                  {project.technology.map((tech) => (
-                    <span key={tech} className="text-sm font-medium bg-secondary text-foreground px-3 py-1.5 rounded-md border border-border">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary uppercase tracking-wider">
+                {project.category}
+              </span>
+              <span className="text-xs font-medium px-3 py-1 rounded-full bg-secondary text-foreground/70 border border-border">
+                {project.industry}
+              </span>
+              <span className="text-xs font-mono text-foreground/50">
+                • {project.clientType}
+              </span>
+            </div>
 
-              <div className="glass p-8 rounded-2xl border border-border/50">
-                <h3 className="text-lg font-bold mb-6 border-b border-border pb-4">Project Overview</h3>
-                <ul className="space-y-4">
-                  <li>
-                    <span className="text-xs text-foreground/50 block uppercase tracking-wider mb-1">Client</span>
-                    <span className="font-medium">{project.clientName}</span>
-                  </li>
-                  <li>
-                    <span className="text-xs text-foreground/50 block uppercase tracking-wider mb-1">Industry</span>
-                    <span className="font-medium">{project.industry}</span>
-                  </li>
-                  <li>
-                    <span className="text-xs text-foreground/50 block uppercase tracking-wider mb-1">Service category</span>
-                    <span className="font-medium">{project.category}</span>
-                  </li>
-                </ul>
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-foreground leading-[1.15]">
+              {project.title}
+            </h1>
+
+            <p className="text-base sm:text-lg md:text-xl text-foreground/75 leading-relaxed">
+              {project.description}
+            </p>
+
+            {/* External Links */}
+            <div className="flex flex-wrap gap-3 pt-4">
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center"
+                >
+                  <Button size="sm" className="font-semibold">
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Visit Live Website
+                  </Button>
+                </a>
+              )}
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center"
+                >
+                  <Button variant="outline" size="sm" className="font-semibold">
+                    <GithubIcon className="w-4 h-4 mr-2" />
+                    View Source Code
+                  </Button>
+                </a>
+              )}
+              <Link href="/start">
+                <Button variant="outline" size="sm">
+                  Request Similar Project
+                </Button>
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content & Architecture Details */}
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          
+          {/* Left Column: Story & Solution (8 cols) */}
+          <div className="lg:col-span-8 space-y-12">
+            
+            {/* Project Cover Image */}
+            <div className="relative h-72 sm:h-96 md:h-[450px] w-full rounded-3xl overflow-hidden border border-border/80 shadow-xl">
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+
+            {/* The Challenge */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-extrabold text-foreground flex items-center">
+                <span className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center text-sm font-bold mr-3">
+                  01
+                </span>
+                The Challenge
+              </h2>
+              <p className="text-base sm:text-lg text-foreground/80 leading-relaxed pl-11">
+                {project.challenge}
+              </p>
+            </div>
+
+            {/* Requirements Scope */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-extrabold text-foreground flex items-center">
+                <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-bold mr-3">
+                  02
+                </span>
+                Project Requirements
+              </h2>
+              <div className="pl-11 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {project.requirements.map((req, rIdx) => (
+                  <div key={rIdx} className="p-4 rounded-xl glass border border-border/70 flex items-start text-xs sm:text-sm text-foreground/85">
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mr-2.5 mt-0.5" />
+                    <span>{req}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Right Column: Details */}
-            <div className="lg:col-span-8 space-y-16">
-              
-              <div className="prose prose-invert max-w-none">
-                <h2 className="text-3xl font-bold mb-6 flex items-center text-foreground">
-                  <span className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center text-sm mr-4 shrink-0">1</span>
-                  The Challenge
-                </h2>
-                <p className="text-lg text-foreground/80 leading-relaxed">
-                  {project.challenge}
-                </p>
-              </div>
-
-              <div className="prose prose-invert max-w-none">
-                <h2 className="text-3xl font-bold mb-6 flex items-center text-foreground">
-                  <span className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center text-sm mr-4 shrink-0">2</span>
-                  Our Solution
-                </h2>
-                <p className="text-lg text-foreground/80 leading-relaxed">
-                  {project.solution}
-                </p>
-              </div>
-
-              <div className="prose prose-invert max-w-none">
-                <h2 className="text-3xl font-bold mb-8 flex items-center text-foreground">
-                  <span className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center text-sm mr-4 shrink-0">3</span>
-                  The Results
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 not-prose">
-                  {project.results.map((result, idx) => (
-                    <div key={idx} className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center hover:bg-primary/10 transition-colors">
-                      <TrendingUp className="w-6 h-6 text-primary mx-auto mb-4 opacity-50" />
-                      <div className="text-4xl font-bold text-primary mb-2">{result.metric}</div>
-                      <div className="text-sm text-foreground/80 font-medium">{result.description}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
+            {/* The Solution */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-extrabold text-foreground flex items-center">
+                <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-sm font-bold mr-3">
+                  03
+                </span>
+                Our Solution & Architecture
+              </h2>
+              <p className="text-base sm:text-lg text-foreground/80 leading-relaxed pl-11">
+                {project.solution}
+              </p>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Hero Image Showcase */}
-      <section className="py-12 bg-background">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="relative aspect-[21/9] rounded-3xl overflow-hidden shadow-2xl border border-border/50">
-            <Image 
-              src={project.image}
-              alt={`${project.title} Interface`}
-              fill
-              className="object-cover"
-            />
-          </div>
-        </div>
-      </section>
+            {/* Verified Outcomes */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-extrabold text-foreground flex items-center">
+                <span className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-sm font-bold mr-3">
+                  04
+                </span>
+                Verified Technical Outcomes
+              </h2>
+              <div className="pl-11 space-y-2.5">
+                {project.verifiedOutcomes.map((out, oIdx) => (
+                  <div key={oIdx} className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex items-center text-sm sm:text-base font-medium text-foreground">
+                    <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0 mr-3" />
+                    <span>{out}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-      {/* CTA */}
-      <section className="py-32">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h2 className="text-4xl font-bold mb-6">Inspired by this project?</h2>
-          <p className="text-lg text-foreground/70 mb-10">
-            Let's discuss how we can build a scalable, high-performance solution for your business.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/start">
-              <Button size="lg" className="h-14 px-8 text-lg rounded-full">Start Your Project</Button>
-            </Link>
-            <Link href="/contact">
-              <Button variant="outline" size="lg" className="h-14 px-8 text-lg rounded-full">Contact Sales</Button>
-            </Link>
           </div>
-        </div>
-      </section>
 
+          {/* Right Column: Spec Sheet (4 cols) */}
+          <div className="lg:col-span-4 space-y-8">
+            
+            {/* Tech Stack Box */}
+            <div className="p-6 rounded-2xl glass border border-border/80 space-y-4">
+              <h3 className="font-bold text-base text-foreground pb-3 border-b border-border/60">
+                Technologies Used
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {project.technologies.map((tech) => (
+                  <span
+                    key={tech}
+                    className="text-xs font-mono font-medium px-3 py-1.5 rounded-lg bg-secondary text-foreground border border-border"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Deliverables Scope Box */}
+            <div className="p-6 rounded-2xl glass border border-border/80 space-y-4">
+              <h3 className="font-bold text-base text-foreground pb-3 border-b border-border/60">
+                Delivered Components
+              </h3>
+              <ul className="space-y-2 text-xs sm:text-sm text-foreground/75">
+                {project.deliverables.map((del, dIdx) => (
+                  <li key={dIdx} className="flex items-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2.5 shrink-0" />
+                    <span>{del}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Start a project with us */}
+            <div className="p-6 sm:p-8 rounded-2xl glass border border-primary/40 text-center space-y-4 shadow-lg">
+              <h3 className="font-black text-xl text-foreground">
+                Need Something Similar?
+              </h3>
+              <p className="text-xs sm:text-sm text-foreground/70">
+                Let's discuss how our technical architecture can be adapted to your business goals.
+              </p>
+              <Link href="/start" className="block pt-2">
+                <Button className="w-full font-semibold">
+                  Start Your Project
+                </Button>
+              </Link>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }
