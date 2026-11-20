@@ -34,8 +34,49 @@ export const metadata = {
 };
 
 export default function ServicesPage() {
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Technology & Development Services',
+    description: 'Complete suite of website development, custom software, mobile apps, and AI solutions.',
+    itemListElement: servicesConfig.map((service, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: service.title,
+      url: `${siteConfig.url}/services/${service.id}`,
+    })),
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteConfig.url,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Services',
+        item: `${siteConfig.url}/services`,
+      },
+    ],
+  };
+
   return (
-    <div className="py-16 md:py-24">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <div className="py-16 md:py-24">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Page Header */}
@@ -156,5 +197,6 @@ export default function ServicesPage() {
 
       </div>
     </div>
+    </>
   );
 }

@@ -35,21 +35,21 @@ export const metadata: Metadata = {
     telephone: false,
   },
   alternates: {
-    canonical: "/",
+    canonical: siteConfig.url,
   },
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: siteConfig.contact.website,
+    url: siteConfig.url,
     title: siteConfig.seo.title,
     description: siteConfig.seo.description,
     siteName: siteConfig.companyName,
     images: [
       {
-        url: siteConfig.brand.logo,
-        width: 800,
-        height: 800,
-        alt: `${siteConfig.companyName} Logo`,
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: `${siteConfig.companyName} — Website & Software Development Company`,
       },
     ],
   },
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.seo.title,
     description: siteConfig.seo.description,
-    images: [siteConfig.brand.logo],
+    images: [siteConfig.ogImage],
     creator: "@cwd_techno",
   },
   robots: {
@@ -124,12 +124,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         closes: "19:00",
       },
     ],
-    sameAs: [
-      siteConfig.socials.github,
-      siteConfig.socials.linkedin,
-      siteConfig.socials.instagram,
-      siteConfig.socials.facebook,
+    areaServed: siteConfig.serviceAreas.map((area) => ({
+      "@type": area === "India" ? "Country" : area === "Uttarakhand" ? "AdministrativeArea" : "City",
+      name: area,
+    })),
+    knowsAbout: [
+      "Website Development",
+      "Custom Software Development",
+      "CRM, ERP and HRMS Development",
+      "SaaS Application Development",
+      "Mobile Application Development",
+      "AI-Powered Applications and Automation",
+      "Digital Marketing & SEO",
     ],
+    sameAs: Object.values(siteConfig.socials).filter(Boolean),
   };
 
   // Schema.org WebSite JSON-LD

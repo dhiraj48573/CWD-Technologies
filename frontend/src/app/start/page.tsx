@@ -1,11 +1,22 @@
 import React, { Suspense } from 'react';
 import { ProjectIntakeForm } from '@/components/forms/ProjectIntakeForm';
 import { Sparkles, CheckCircle2 } from 'lucide-react';
+import { siteConfig } from '@/config/site.config';
 
 export const metadata = {
   title: 'Start Your Project | CWD Technologies',
   description:
     'Submit your project requirements and receive a comprehensive technical proposal and itemized quotation from CWD Technologies.',
+  alternates: {
+    canonical: `${siteConfig.url}/start`,
+  },
+  openGraph: {
+    title: 'Start Your Project | CWD Technologies',
+    description:
+      'Submit your project requirements and receive a comprehensive technical proposal from CWD Technologies.',
+    url: `${siteConfig.url}/start`,
+    siteName: siteConfig.companyName,
+  },
 };
 
 export default function StartProjectPage() {

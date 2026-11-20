@@ -1,9 +1,21 @@
 import React from 'react';
 import { legalConfig } from '@/config/legal.config';
+import { siteConfig } from '@/config/site.config';
 
 export const metadata = {
   title: 'Terms & Conditions | CWD Technologies',
-  description: 'Terms and conditions for CWD Technologies services and products.',
+  description:
+    'Terms and conditions for CWD Technologies software development, website development, AI, and digital services.',
+  alternates: {
+    canonical: `${siteConfig.url}/terms`,
+  },
+  openGraph: {
+    title: 'Terms & Conditions | CWD Technologies',
+    description:
+      'Terms and conditions for CWD Technologies software development, website development, and digital services.',
+    url: `${siteConfig.url}/terms`,
+    siteName: siteConfig.companyName,
+  },
 };
 
 export default function TermsPage() {

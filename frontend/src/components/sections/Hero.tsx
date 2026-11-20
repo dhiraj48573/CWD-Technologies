@@ -44,6 +44,9 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-black tracking-tight text-foreground leading-[1.12]"
             >
+              <span className="block text-primary text-xs sm:text-sm font-semibold tracking-wider uppercase mb-2 font-mono">
+                Website & Custom Software Development Company
+              </span>
               Building Digital Experiences.{' '}
               <span className="gradient-text">
                 Engineering Business Growth.

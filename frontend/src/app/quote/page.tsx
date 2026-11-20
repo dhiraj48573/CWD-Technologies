@@ -1,8 +1,20 @@
 import { QuotationGenerator } from '@/components/forms/QuotationGenerator';
+import { siteConfig } from '@/config/site.config';
 
 export const metadata = {
-  title: 'Generate Quotation | CWD Technologies',
-  description: 'Build your custom project quote for Website, Software, AI, and Marketing services.',
+  title: 'Generate Project Quotation | CWD Technologies',
+  description:
+    'Build your custom project estimate and quotation for Website Development, Custom Software, CRM/ERP, and AI services from CWD Technologies.',
+  alternates: {
+    canonical: `${siteConfig.url}/quote`,
+  },
+  openGraph: {
+    title: 'Generate Project Quotation | CWD Technologies',
+    description:
+      'Build your custom project estimate and quotation for Website, Software, and AI services.',
+    url: `${siteConfig.url}/quote`,
+    siteName: siteConfig.companyName,
+  },
 };
 
 export default function QuotePage() {

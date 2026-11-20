@@ -110,15 +110,21 @@ export default async function ServiceDetailPage({
     provider: {
       '@type': 'LocalBusiness',
       name: siteConfig.companyName,
+      url: siteConfig.url,
       telephone: siteConfig.contact.phone,
       address: {
         '@type': 'PostalAddress',
+        streetAddress: 'Jurs Country',
         addressLocality: 'Haridwar',
         addressRegion: 'Uttarakhand',
+        postalCode: '249401',
         addressCountry: 'IN',
       },
     },
-    areaServed: 'Worldwide',
+    areaServed: siteConfig.serviceAreas.map((area) => ({
+      '@type': 'AdministrativeArea',
+      name: area,
+    })),
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: `${service.title} Offerings`,

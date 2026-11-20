@@ -32,8 +32,62 @@ export default function ContactPage() {
     siteConfig.contact.whatsappDefaultMessage
   )}`;
 
+  const contactJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact CWD Technologies',
+    url: `${siteConfig.url}/contact`,
+    mainEntity: {
+      '@type': 'LocalBusiness',
+      name: siteConfig.companyName,
+      url: siteConfig.url,
+      telephone: siteConfig.contact.phone,
+      email: siteConfig.contact.email,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Jurs Country',
+        addressLocality: 'Haridwar',
+        addressRegion: 'Uttarakhand',
+        postalCode: '249401',
+        addressCountry: 'IN',
+      },
+      areaServed: siteConfig.serviceAreas.map((area) => ({
+        '@type': 'AdministrativeArea',
+        name: area,
+      })),
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteConfig.url,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Contact',
+        item: `${siteConfig.url}/contact`,
+      },
+    ],
+  };
+
   return (
-    <div className="py-16 md:py-24">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <div className="py-16 md:py-24">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Header */}
@@ -162,5 +216,6 @@ export default function ContactPage() {
 
       </div>
     </div>
+    </>
   );
 }

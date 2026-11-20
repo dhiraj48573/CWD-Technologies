@@ -2,6 +2,18 @@ import { siteConfig } from '@/config/site.config';
 
 export const metadata = {
   title: 'Privacy Policy | CWD Technologies',
+  description:
+    'Privacy Policy for CWD Technologies. Learn how we collect, protect, and handle client project information and communication data.',
+  alternates: {
+    canonical: `${siteConfig.url}/privacy`,
+  },
+  openGraph: {
+    title: 'Privacy Policy | CWD Technologies',
+    description:
+      'Privacy Policy for CWD Technologies. Learn how we collect, protect, and handle client data.',
+    url: `${siteConfig.url}/privacy`,
+    siteName: siteConfig.companyName,
+  },
 };
 
 export default function PrivacyPage() {
