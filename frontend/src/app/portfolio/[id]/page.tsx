@@ -76,7 +76,7 @@ export default async function PortfolioDetailPage({
     '@context': 'https://schema.org',
     '@type': 'CreativeWork',
     name: project.title,
-    headline: project.headline,
+    headline: project.title,
     description: project.description,
     creator: {
       '@type': 'Organization',

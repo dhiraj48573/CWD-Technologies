@@ -1,7 +1,9 @@
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cwdtechnologies.com";
+
 export const siteConfig = {
   companyName: "CWD Technologies",
   brandName: "CWD Technologies",
-  url: "https://cwd-technologies.vercel.app",
+  url: siteUrl,
   ogImage: "/cwd-techno-logo.jpeg",
   tagline: "Building Digital Experiences. Engineering Business Growth.",
   primaryPositioning: "Your Technology & Digital Growth Partner",
@@ -20,8 +22,8 @@ export const siteConfig = {
     whatsappDefaultMessage:
       "Hello CWD Technologies, I am interested in your services. I would like to discuss my project requirements.",
     email: "codewithdhiru07@gmail.com",
-    website: "https://cwd-technologies.vercel.app",
-    customDomain: "https://YOUR_DOMAIN.COM",
+    website: siteUrl,
+    customDomain: "https://cwdtechnologies.com",
   },
   socials: {
     github: "https://github.com/dhiraj48573/CWD-Technologies",
