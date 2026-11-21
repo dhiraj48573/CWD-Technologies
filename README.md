@@ -238,8 +238,11 @@ NEXT_PUBLIC_SITE_URL=https://cwd-technologies.vercel.app
 | **Headquarters** | Haridwar, Uttarakhand 249401, India |
 | **Official Phone** | `+91 9259534648` |
 | **Official WhatsApp** | `+91 9259534648` ([Direct Chat Link](https://wa.me/919259534648)) |
-| **Official Email** | `codewithdhiru07@gmail.com` |
-| **Official Website** | [https://cwd-technologies.vercel.app/](https://cwd-technologies.vercel.app/) |
+| **General Inquiries** | `info@cwdtechnologies.com` |
+| **Sales & Quotations** | `sales@cwdtechnologies.com` |
+| **Project Proposals & RFPs** | `project@cwdtechnologies.com` |
+| **Technical Support** | `support@cwdtechnologies.com` |
+| **Official Website** | [https://cwdtechnologies.com/](https://cwdtechnologies.com/) |
 | **GitHub Repository** | [github.com/dhiraj48573/CWD-Technologies](https://github.com/dhiraj48573/CWD-Technologies) |
 
 ---

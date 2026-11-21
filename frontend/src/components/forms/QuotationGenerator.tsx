@@ -337,7 +337,7 @@ export function QuotationGenerator() {
                 <p className="text-sm text-foreground/70 mt-1">{siteConfig.primaryPositioning}</p>
                 <div className="mt-4 text-sm text-foreground/80 space-y-0.5">
                   <p>{siteConfig.contact.location}</p>
-                  <p>{siteConfig.contact.email}</p>
+                  <p>Sales: {siteConfig.contact.emails?.sales || siteConfig.contact.email}</p>
                   <p>{siteConfig.contact.phone}</p>
                 </div>
               </div>

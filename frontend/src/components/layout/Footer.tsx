@@ -160,11 +160,27 @@ export function Footer() {
                   {siteConfig.contact.phone}
                 </a>
               </div>
-              <div className="flex items-center space-x-2.5">
-                <Mail className="w-4 h-4 text-primary shrink-0" />
-                <a href={`mailto:${siteConfig.contact.email}`} className="hover:text-primary transition-colors break-all">
-                  {siteConfig.contact.email}
-                </a>
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center space-x-2.5">
+                  <Mail className="w-4 h-4 text-primary shrink-0" />
+                  <a href={`mailto:${siteConfig.contact.emails.info}`} className="hover:text-primary transition-colors break-all text-xs sm:text-sm font-medium">
+                    {siteConfig.contact.emails.info}
+                  </a>
+                </div>
+                <div className="pl-6.5 text-xs text-foreground/60 space-y-1">
+                  <div>
+                    <span className="text-[10px] font-mono uppercase text-foreground/45 block">Sales:</span>
+                    <a href={`mailto:${siteConfig.contact.emails.sales}`} className="hover:text-primary transition-colors">
+                      {siteConfig.contact.emails.sales}
+                    </a>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase text-foreground/45 block">Support:</span>
+                    <a href={`mailto:${siteConfig.contact.emails.support}`} className="hover:text-primary transition-colors">
+                      {siteConfig.contact.emails.support}
+                    </a>
+                  </div>
+                </div>
               </div>
               <div className="pt-2">
                 <a

@@ -146,20 +146,58 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                {/* Email */}
+                {/* Departmental Emails */}
                 <div className="flex items-start space-x-3.5">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
                     <Mail className="w-5 h-5" />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-sm text-foreground">Official Email</h3>
-                    <a
-                      href={`mailto:${siteConfig.contact.email}`}
-                      className="text-sm font-semibold text-primary hover:underline block mt-0.5 break-all"
-                    >
-                      {siteConfig.contact.email}
-                    </a>
-                    <span className="text-xs text-foreground/50">Typical response within 2 hours</span>
+                  <div className="w-full space-y-2">
+                    <div>
+                      <h3 className="font-bold text-sm text-foreground">Official Department Emails</h3>
+                      <p className="text-xs text-foreground/60">Connect directly with the specialized desk:</p>
+                    </div>
+
+                    <div className="space-y-2 text-xs pt-1">
+                      <div className="p-2.5 rounded-xl bg-background/60 border border-border/70 hover:border-primary/50 transition-colors">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-primary font-bold block mb-0.5">General Inquiries</span>
+                        <a
+                          href={`mailto:${siteConfig.contact.emails.info}`}
+                          className="text-xs font-semibold text-foreground hover:text-primary transition-colors break-all"
+                        >
+                          {siteConfig.contact.emails.info}
+                        </a>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-background/60 border border-border/70 hover:border-primary/50 transition-colors">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-500 font-bold block mb-0.5">Sales & Quotations</span>
+                        <a
+                          href={`mailto:${siteConfig.contact.emails.sales}`}
+                          className="text-xs font-semibold text-foreground hover:text-primary transition-colors break-all"
+                        >
+                          {siteConfig.contact.emails.sales}
+                        </a>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-background/60 border border-border/70 hover:border-primary/50 transition-colors">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-indigo-400 font-bold block mb-0.5">Project Proposals & RFPs</span>
+                        <a
+                          href={`mailto:${siteConfig.contact.emails.project}`}
+                          className="text-xs font-semibold text-foreground hover:text-primary transition-colors break-all"
+                        >
+                          {siteConfig.contact.emails.project}
+                        </a>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-background/60 border border-border/70 hover:border-primary/50 transition-colors">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-amber-500 font-bold block mb-0.5">Client Support & Desk</span>
+                        <a
+                          href={`mailto:${siteConfig.contact.emails.support}`}
+                          className="text-xs font-semibold text-foreground hover:text-primary transition-colors break-all"
+                        >
+                          {siteConfig.contact.emails.support}
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

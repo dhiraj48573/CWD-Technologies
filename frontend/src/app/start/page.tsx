@@ -61,6 +61,20 @@ export default function StartProjectPage() {
           <ProjectIntakeForm />
         </Suspense>
 
+        {/* Direct Email Proposal Box */}
+        <div className="mt-8 text-center text-xs text-foreground/60 border border-border/60 rounded-2xl p-4 bg-card/40">
+          <span>Already have an RFP document, SRS, or detailed requirements brief? </span>
+          <span className="block sm:inline mt-1 sm:mt-0">
+            Email directly to{' '}
+            <a
+              href={`mailto:${siteConfig.contact.emails.project}`}
+              className="text-primary font-semibold hover:underline"
+            >
+              {siteConfig.contact.emails.project}
+            </a>
+          </span>
+        </div>
+
       </div>
     </div>
   );

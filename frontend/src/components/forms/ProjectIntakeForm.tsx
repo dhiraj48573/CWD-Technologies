@@ -127,7 +127,7 @@ export function ProjectIntakeForm({ preselectedService }: { preselectedService?:
 
   return (
     <form onSubmit={handleSubmit} className="p-6 sm:p-10 rounded-3xl glass border border-border/80 shadow-xl space-y-6">
-      
+
       {status.type === 'error' && (
         <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-sm flex items-start">
           <AlertCircle className="w-5 h-5 mr-2 shrink-0 mt-0.5" />
@@ -136,7 +136,7 @@ export function ProjectIntakeForm({ preselectedService }: { preselectedService?:
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        
+
         {/* Full Name */}
         <div className="space-y-2">
           <label className="text-xs sm:text-sm font-semibold text-foreground">
@@ -145,7 +145,7 @@ export function ProjectIntakeForm({ preselectedService }: { preselectedService?:
           <input
             type="text"
             required
-            placeholder="e.g. Ramesh Kumar"
+            placeholder="e.g. Niraj Singh"
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             className="w-full bg-background border border-border/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
@@ -174,7 +174,7 @@ export function ProjectIntakeForm({ preselectedService }: { preselectedService?:
           <input
             type="email"
             required
-            placeholder="e.g. ramesh@example.com"
+            placeholder="e.g. niraj@example.com"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className="w-full bg-background border border-border/80 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground"

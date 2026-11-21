@@ -22,7 +22,13 @@ export const siteConfig = {
     whatsapp: "9259534648",
     whatsappDefaultMessage:
       "Hello CWD Technologies, I am interested in your services. I would like to discuss my project requirements.",
-    email: "codewithdhiru07@gmail.com",
+    email: "info@cwdtechnologies.com",
+    emails: {
+      info: "info@cwdtechnologies.com",
+      sales: "sales@cwdtechnologies.com",
+      support: "support@cwdtechnologies.com",
+      project: "project@cwdtechnologies.com",
+    },
     website: siteUrl,
     customDomain: "https://cwdtechnologies.com",
   },

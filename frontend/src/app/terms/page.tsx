@@ -76,6 +76,13 @@ export default function TermsPage() {
               <p><strong>Confidentiality:</strong> {terms.confidentiality}</p>
               <p className="mt-2"><strong>Data Protection:</strong> {terms.dataProtection}</p>
             </div>
+
+            <div>
+              <h2 className="text-2xl font-semibold mb-3">8. Support & Department Contacts</h2>
+              <p><strong>Technical Support & Bug Reports:</strong> <a href={`mailto:${siteConfig.contact.emails?.support || siteConfig.contact.email}`} className="text-primary underline">{siteConfig.contact.emails?.support || siteConfig.contact.email}</a></p>
+              <p className="mt-2"><strong>Billing & Quotations:</strong> <a href={`mailto:${siteConfig.contact.emails?.sales || siteConfig.contact.email}`} className="text-primary underline">{siteConfig.contact.emails?.sales || siteConfig.contact.email}</a></p>
+              <p className="mt-2"><strong>General Legal & Admin:</strong> <a href={`mailto:${siteConfig.contact.emails?.info || siteConfig.contact.email}`} className="text-primary underline">{siteConfig.contact.emails?.info || siteConfig.contact.email}</a></p>
+            </div>
           </div>
         </div>
       </div>

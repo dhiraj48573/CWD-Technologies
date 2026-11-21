@@ -40,10 +40,11 @@ export default function PrivacyPage() {
             We take reasonable measures to help protect information about you from loss, theft, misuse, unauthorized access, disclosure, alteration, and destruction.
           </p>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4">4. Contact Us</h2>
+          <h2 className="text-2xl font-semibold mt-8 mb-4">4. Contact Us & Privacy Support</h2>
           <p>
-            If you have any questions about this Privacy Policy, please contact us at: <br />
-            Email: {siteConfig.contact.email} <br />
+            If you have any questions regarding this Privacy Policy or wish to exercise your data rights, please contact our team: <br />
+            Support: <a href={`mailto:${siteConfig.contact.emails?.support || siteConfig.contact.email}`} className="text-primary underline">{siteConfig.contact.emails?.support || siteConfig.contact.email}</a> <br />
+            General Inquiries: <a href={`mailto:${siteConfig.contact.emails?.info || siteConfig.contact.email}`} className="text-primary underline">{siteConfig.contact.emails?.info || siteConfig.contact.email}</a> <br />
             Phone: {siteConfig.contact.phone}
           </p>
         </div>
