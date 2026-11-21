@@ -21,10 +21,10 @@ export default function PrivacyPage() {
     <div className="py-20 md:py-32">
       <div className="container mx-auto max-w-4xl px-4">
         <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
-        
+
         <div className="prose prose-invert max-w-none text-foreground/80 space-y-6">
           <p>Last updated: {new Date().toLocaleDateString()}</p>
-          
+
           <h2 className="text-2xl font-semibold mt-8 mb-4">1. Information We Collect</h2>
           <p>
             We collect information that you provide directly to us, including when you fill out a form, request a quote, or communicate with us. The types of information we may collect include your name, email address, phone number, company name, and project details.

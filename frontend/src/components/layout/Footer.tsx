@@ -16,7 +16,7 @@ export function Footer() {
 
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
-          
+
           {/* Brand & Mission (Col 1 & 2) */}
           <div className="lg:col-span-2 space-y-5">
             <Link href="/" className="inline-flex items-center space-x-3 group">
